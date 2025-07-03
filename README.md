@@ -51,7 +51,7 @@ Users select a sample folder and pick two fluorescence channel images for side-b
 
 ^As seen on the right, the app creates a composite overlay of the brightened channels, highlighting colocalized regions in yellow.
 
-## Annotation Generator (xml)
+## Annotation Generator
 This Python script processes cell segmentation data and generates XML annotations for cancer cells (specifically CD33+ cells) in a format compatible with object detection frameworks (e.g., Pascal VOC format). It reads:
 - Cell mask CSV files that contain labeled cell regions as integers (each integer corresponds to a cell ID).
 - CSV listing of which cells are cancer-positive.
