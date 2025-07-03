@@ -16,5 +16,14 @@ This approach automates and accelerates cell identification, surpassing manual m
 ## Dataviewer
 
 <p align="center">
-  <img src="misc/dataviewer.png" width="550px" />
+  <img src="misc/dataviewer_overlay.png" width="550px" />
+</p>
+<p align="center">
+  <img src="misc/combinedchannels.png" width="550px" />
+</p>
+
+
+## XML Generator
+<p align="center">
+  <img src="misc/xml_output.png" width="550px" />
 </p>
