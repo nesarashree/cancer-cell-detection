@@ -62,18 +62,19 @@ for well_index in range(len(cell_csv_files)):
     num_found_cells = 0
 
     # Calculate bounding boxes for each cell by scanning the matrix
-    for y in range(matrix_height):
+    for y in range(matrix_height): # col
         if y % 100 == 0:
             progress = (y / matrix_height) * 100
             print(f"Progress: {progress:.2f}%")
-        for x in range(matrix_width):
+        for x in range(matrix_width): # row
+            # get the pixel value from the matrix
             cell_id = cell_matrix[y, x]
             if cell_id == 0:
                 continue
 
             # Update bounding box coordinates
             if smallest_x[cell_id] == -1 or x < smallest_x[cell_id]:
-                smallest_x[cell_id] = x
+                smallest_x[cell_id] = x 
             if smallest_y[cell_id] == -1 or y < smallest_y[cell_id]:
                 smallest_y[cell_id] = y
             if x > largest_x[cell_id]:
