@@ -7,7 +7,7 @@ To address these challenges and improve scalability, we present an automated ID 
   <img src="misc/predictions.png" width="300px" />
 </p>
 
-This deep learning-based solution streamlines the identification process, significantly reducing the need for manual intervention while improving both accuracy and throughput. By automating cell classification, our method enables scalable, high-fidelity analysis via computer vision, contributing to more efficient AML diagnostics and research workflows.
+This computer vision-based solution significantly reduces the need for manual intervention while improving both accuracy and throughput. By automating cell classification, our method enables scalable, high-fidelity analysis, contributing to efficient AML diagnostics and research workflows.
 
 ## Dataset
 
@@ -19,6 +19,7 @@ We formatted our dataset using the Pascal VOC 2007 structure, which includes thr
 - Channel 4: PARP (apoptosis marker)
 - Channel 5: CD3 (T-cell marker for immune cells)
 - Channel 6: Nucleus (nuclear stain)
+
 2. **Annotations/**: Contains .xml files generated from cell segmentation masks (see `cell_annotation_generator.py`) and validated CD33+/CD3+ cell ID lists.
   
 3. **ImageSets/**: Includes `train.txt`, `val.txt`, and `trainval.txt`, listing image filenames (without extensions) for training and validation splits with no overlap.
@@ -43,3 +44,8 @@ This Python script processes cell segmentation data and generates XML annotation
 - Cell mask CSV files that contain labeled cell regions as integers (each integer corresponds to a cell ID).
 - CSV listing of which cells are cancer-positive.
 For each cell, the script calculates bounding boxes (smallest and largest X and Y coordinates where the cell appears in the mask), applies some position corrections, checks if the cell is cancer-positive, and writes XML annotation files describing bounding boxes of the cancer cells for training.
+
+## Training
+Use a RetinaNet object detection model using Keras and TensorFlow, following a streamlined [tutorial](https://github.com/jaspereb/Retinanet-Tutorial) designed for easy deployment on custom datasets. Train on cell images labeled in Pascal VOC format, with XML annotations generated for AML-positive cells. 
+
+During training, monitor model performance using TensorBoard, adjusting the number of steps (typically 2,000–10,000) based on dataset size. After training, select the checkpoint with the lowest total loss (excluding classification loss) and convert it to inference mode for downstream prediction tasks.
