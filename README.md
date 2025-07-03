@@ -1,4 +1,7 @@
 # Detection of Acute Myeloid Leukemia (AML) Cells in Patient-Derived Microscopy Samples
+<p align="center">
+  <img src="misc/predictions.png" width="200px" />
+</p>
 Cells are the fundamental biological units, and identifying specific cell types—such as cancerous or immune cells—is critical for disease diagnosis and treatment. Traditional methods rely on manual thresholding of fluorescence markers to differentiate cells from debris and to classify cancer and immune cells, which is time-consuming and patient-specific.
 
 Our dataset consists of microscopy images with six fluorescence channels representing different markers:
