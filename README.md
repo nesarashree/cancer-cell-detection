@@ -22,6 +22,6 @@ This approach automates and accelerates cell identification, surpassing manual m
 
 
 ## XML Generator
-<p align="center">
-  <img src="misc/xml_output.png" width="550px" />
+<p>
+  <img src="misc/xml_output.png" width="200px" />
 </p>
