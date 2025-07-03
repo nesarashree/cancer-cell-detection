@@ -15,10 +15,10 @@ We formatted our dataset using the Pascal VOC 2007 structure, which includes thr
 1. **JPEGImages/**: Contains microscopy images (800×800 resolution) of annotated clinical samples at Oregon Health & Science University, preprocessed across six fluorescence channels (see `cell_JPG_images`).
 - Channel 1: DIC (differential interference contrast)
 - Channel 2: CD33 (marker for Acute Myeloid Leukemia cancer cells)
-- Channel 3: Ki67 (nuclear protein marker associated with cellular proliferation)
+- Channel 3: Ki67 (nuclear protein quality associated with cellular proliferation)
 - Channel 4: PARP (apoptosis marker)
 - Channel 5: CD3 (T-cell marker for immune cells)
-- Channel 6: Nucleus (nuclear stain)
+- Channel 6: Nucleus
 
 2. **Annotations/**: Contains .xml files generated from cell segmentation masks (see `cell_annotation_generator.py`) and validated CD33+/CD3+ cell ID lists.
   
