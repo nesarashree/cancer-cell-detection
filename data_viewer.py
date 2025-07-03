@@ -78,7 +78,7 @@ else:
     bright_img_a = load_and_brighten_image(os.path.join(selected_folder_path, channel_a_filename), RED)
     bright_img_b = load_and_brighten_image(os.path.join(selected_folder_path, channel_b_filename), GREEN)
 
-    # Mapping for channel labels (assuming filenames are consistent or use indices)
+    # Mapping for channel labels (assuming filenames are consistent, see cell_JPG_images folder for naming reference)
     channel_labels = {
         0: "Channel 1: DIC",
         1: "Channel 2: CD33",
