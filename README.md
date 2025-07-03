@@ -24,7 +24,6 @@ We formatted our dataset using the Pascal VOC 2007 structure, which includes thr
   
 3. **ImageSets/**: Includes `train.txt`, `val.txt`, and `trainval.txt`, listing image filenames (without extensions) for training and validation splits with no overlap.
 
-**Gold Standard**
 The ground truth was based on experimentally validated CD33+ and CD3+ cell ID lists provided by OHSU, serving as the gold standard control. These IDs were mapped back to their spatial locations in the segmentation masks to generate accurate training labels (see `cell_mask_visualizer.py`).
 
 ## Dataviewer
@@ -43,6 +42,7 @@ Users select a sample folder and pick two fluorescence channel images for side-b
 This Python script processes cell segmentation data and generates XML annotations for cancer cells (specifically CD33+ cells) in a format compatible with object detection frameworks (e.g., Pascal VOC format). It reads:
 - Cell mask CSV files that contain labeled cell regions as integers (each integer corresponds to a cell ID).
 - CSV listing of which cells are cancer-positive.
+
 For each cell, the script calculates bounding boxes (smallest and largest X and Y coordinates where the cell appears in the mask), applies some position corrections, checks if the cell is cancer-positive, and writes XML annotation files describing bounding boxes of the cancer cells for training.
 
 ## Training
