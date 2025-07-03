@@ -12,3 +12,9 @@ Our dataset consists of microscopy images with six fluorescence channels represe
 Current approaches use fixed pixel thresholds around nuclei and manual fluorescence cutoffs, requiring human tuning per patient sample. This limits scalability and accuracy. We apply machine learning, specifically RetinaNet with a TensorFlow/Keras backend, for automated detection and classification of AML (CD33+) cancer cells and immune cells (CD3+). RetinaNet’s one-stage object detection architecture efficiently handles dense, small objects like cells. Training data is sourced from Oregon Health and Science University.
 
 This approach automates and accelerates cell identification, surpassing manual methods in speed and accuracy, enabling scalable analysis and improved cancer research workflows.
+
+## Dataviewer
+
+<p align="center">
+  <img src="misc/dataviewer.png" width="550px" />
+</p>
