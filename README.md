@@ -24,6 +24,19 @@ We formatted our dataset using the Pascal VOC 2007 structure, which includes thr
   
 3. **ImageSets/**: Includes `train.txt`, `val.txt`, and `trainval.txt`, listing image filenames (without extensions) for training and validation splits with no overlap.
 
+**Expected Folder Structure**
+```
+datasets/
+└── VOCdevkit/
+    └── VOC2007/
+        ├── Annotations/
+        ├── JPEGImages/
+        └── ImageSets/
+            └── Main/
+                ├── train.txt
+                ├── val.txt
+                └── trainval.txt
+```
 The ground truth was based on experimentally validated CD33+ and CD3+ cell ID lists provided by OHSU, serving as the gold standard control. These IDs were mapped back to their spatial locations in the segmentation masks to generate accurate training labels (see `cell_mask_visualizer.py`).
 
 ## Dataviewer
@@ -47,5 +60,23 @@ For each cell, the script calculates bounding boxes (smallest and largest X and 
 
 ## Training
 Use a RetinaNet object detection model using Keras and TensorFlow, following a streamlined [tutorial](https://github.com/jaspereb/Retinanet-Tutorial) designed for easy deployment on custom datasets. Train on cell images labeled in Pascal VOC format, with XML annotations generated for AML-positive cells. 
+```
+python train.py --data-dir ./datasets/VOCdevkit/VOC2007 \
+                --snapshot-path ./snapshots \
+                --epochs 10 \
+                --batch-size 4
+```
+**TensorBoard**
 
-During training, monitor model performance using TensorBoard, adjusting the number of steps (typically 2,000–10,000) based on dataset size. After training, select the checkpoint with the lowest total loss (excluding classification loss) and convert it to inference mode for downstream prediction tasks.
+During training, monitor model performance using TensorBoard:
+1. Make sure training has started and is saving logs (usually to snapshots/logs/).
+2. Open a terminal, navigate to your project directory (where snapshots/ is), then run:
+`tensorboard --logdir snapshots/logs`
+3. Go to `http://localhost:6006` on a browser.
+This launches the TensorBoard dashboard where you can see:
+- loss: total loss during training
+- regression_loss: box localization loss
+- classification_loss: object class prediction loss
+- Learning curves over epochs
+
+After training, select the checkpoint with the lowest total loss (excluding classification loss) and convert it to inference mode for downstream prediction tasks.
