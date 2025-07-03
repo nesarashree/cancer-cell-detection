@@ -160,3 +160,19 @@ for well_index in range(len(cell_csv_files)):
 
     print(f"Annotated {cell_counter} cancer cells in {xml_filename}")
 
+'''
+print("Cell " + str(c) + ": " + str(smallestX[c]) + ", " + str(smallestY[c]) + " to " + str(largestX[c]) + ", " + str(largestY[c]))
+    print("<object>")
+    print("<name>" + str(c) + "</name>")
+    print("<pose>Unspecified</pose>")
+    print("<truncated>0</truncated>")
+    print("<difficult>0</difficult>")
+    print("<bndbox>")
+    print("<xmin>" + str(smallestX[c]) + "</xmin>")
+    print("<ymin>" + str(smallestY[c]) + "</ymin>")
+    print("<xmax>" + str(largestX[c]) + "</xmax>")
+    print("<ymax>" + str(largestY[c]) + "</ymax>")
+    print("</bndbox>")
+    print("</object>")
+    print(" ")
+'''
