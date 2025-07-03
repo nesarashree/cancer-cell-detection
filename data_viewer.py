@@ -1,102 +1,115 @@
 '''
-This Streamlit app visualizes cancer cell images from two selectable fluorescence channels with adjustable brightness, 
-combines them to highlight overlapping regions, and displays the corresponding cell segmentation ground truth from CSV data.
+This Streamlit app enables interactive visualization of multi-channel microscopy images alongside their cell segmentation ground truths. 
+Users select a dataset folder containing cancer cell (CD33) images, then pick two specific channels to display: DIC, CD33, Ki67, PARP, CD3, Nucleus. 
+It shows the brightened individual channels, a combined overlay highlighting overlapping signals in yellow, and the corresponding cell segmentation CSV as a grayscale mask. 
 '''
 
-import os
 import pandas as pd
-import numpy as np
+import os
 import streamlit as st
 from PIL import Image
+import numpy as np
 from matplotlib.image import imread
 
-# Constants for image preview size and color channel indices
+# Constants for UI and color channels
 IMAGE_PREVIEW_SIZE = 300
-RED_CHANNEL = 0
-GREEN_CHANNEL = 1
-BLUE_CHANNEL = 2
+RED = 0
+GREEN = 1
+BLUE = 2
 DS_STORE_FILENAME = '.DS_Store'
 
-# Root folders containing images and CSV data
+# Root folders for images and CSVs
 DATA_IMAGES_ROOT = 'CellJpegs'
 DATA_CSVS_ROOT = 'CellCSVs'
 
-def get_sorted_folder_list(root_folder):
-    """Return sorted list of folder contents excluding system files like .DS_Store."""
-    items = os.listdir(root_folder)
+def get_clean_folder_list(folder_path):
+    """Return sorted list of folder contents excluding .DS_Store"""
+    items = os.listdir(folder_path)
     if DS_STORE_FILENAME in items:
         items.remove(DS_STORE_FILENAME)
     items.sort()
     return items
 
-# Get list of image folders and CSV files
-image_folders = get_sorted_folder_list(DATA_IMAGES_ROOT)
-csv_files = get_sorted_folder_list(DATA_CSVS_ROOT)
+# Load folder lists, removing .DS_Store if present
+image_folders = get_clean_folder_list(DATA_IMAGES_ROOT)
+csv_files = get_clean_folder_list(DATA_CSVS_ROOT)
 
-# Sidebar selection for image folder
-folder_index = st.sidebar.slider('Select Cell Image Folder', 1, len(image_folders)) - 1
-selected_folder = image_folders[folder_index]
-selected_folder_path = os.path.join(DATA_IMAGES_ROOT, selected_folder)
+# Sidebar folder selection slider (1-based index)
+selected_folder_idx = st.sidebar.slider(
+    'Cell Image Folder', 1, len(image_folders), 1
+) - 1
+selected_folder_name = image_folders[selected_folder_idx]
+selected_folder_path = os.path.join(DATA_IMAGES_ROOT, selected_folder_name)
 
-# Skip folders starting with '.' (hidden/system files)
-if selected_folder.startswith('.'):
-    st.write(f"Skipping folder: {selected_folder}")
+# Skip folders starting with '.' (hidden/system folders)
+if selected_folder_name.startswith('.'):
+    st.warning(f"Skipping folder '{selected_folder_name}' (hidden or invalid)")
 else:
-    # List image files inside the selected folder
-    image_files = get_sorted_folder_list(selected_folder_path)
+    # List image files in the selected folder
+    image_files = get_clean_folder_list(selected_folder_path)
 
-    # Sidebar sliders to select two image channels from the folder
-    channel_a_index = st.sidebar.slider('Select Image Channel A', 1, len(image_files)) - 1
-    channel_b_index = st.sidebar.slider('Select Image Channel B', 1, len(image_files)) - 1
+    # Sliders for selecting channel images
+    channel_a_idx = st.sidebar.slider(
+        'Image A Cell Channel', 1, len(image_files), 1
+    ) - 1
+    channel_b_idx = st.sidebar.slider(
+        'Image B Cell Channel', 1, len(image_files), min(2, len(image_files))
+    ) - 1
 
-    channel_a_name = image_files[channel_a_index]
-    channel_b_name = image_files[channel_b_index]
+    channel_a_filename = image_files[channel_a_idx]
+    channel_b_filename = image_files[channel_b_idx]
 
-    # Sidebar slider for brightness multiplier
-    brightness_multiplier = st.sidebar.slider('Brightness Multiplier', 1, 10, 1)
+    # Brightness multiplier slider
+    brightness = st.sidebar.slider('Brightness Multiplier', 1, 10, 1)
 
-    st.write(f"Image folder: {selected_folder}")
-    st.write(f"Channel A: {channel_a_name}")
-    st.write(f"Channel B: {channel_b_name}")
-    st.write(f"Brightness multiplier: {brightness_multiplier}x")
+    st.write(f"Selected Folder: **{selected_folder_name}**")
+    st.write(f"Brightness Multiplier: **x{brightness}**")
 
-    # Load and brighten Channel A image
-    channel_a_path = os.path.join(selected_folder_path, channel_a_name)
-    image_a = imread(channel_a_path).astype(np.float32) * brightness_multiplier
+    def load_and_brighten_image(img_path, channel):
+        """Load image, multiply brightness, place in specified color channel"""
+        img_data = imread(img_path).astype(np.float32) * brightness
+        height, width = img_data.shape[:2]
+        bright_img = np.zeros((height, width, 3), dtype=np.uint8)
+        # Clip values and assign to color channel
+        bright_img[:, :, channel] = np.clip(img_data, 0, 255).astype(np.uint8)
+        return bright_img
 
-    # Prepare blank RGB image and assign brightened data to Red channel
-    image_a_rgb = np.zeros((*image_a.shape[:2], 3), dtype=np.uint8)
-    image_a_rgb[:, :, RED_CHANNEL] = np.clip(image_a, 0, 255).astype(np.uint8)
+    # Load and brighten images for channels A and B
+    bright_img_a = load_and_brighten_image(os.path.join(selected_folder_path, channel_a_filename), RED)
+    bright_img_b = load_and_brighten_image(os.path.join(selected_folder_path, channel_b_filename), GREEN)
 
-    # Load and brighten Channel B image
-    channel_b_path = os.path.join(selected_folder_path, channel_b_name)
-    image_b = imread(channel_b_path).astype(np.float32) * brightness_multiplier
+    # Mapping for channel labels (assuming filenames are consistent or use indices)
+    channel_labels = {
+        0: "Channel 1: DIC",
+        1: "Channel 2: CD33",
+        2: "Channel 3: Ki67",
+        3: "Channel 4: PARP",
+        4: "Channel 5: CD3",
+        5: "Channel 6: Nucleus"
+    }
 
-    # Prepare blank RGB image and assign brightened data to Green channel
-    image_b_rgb = np.zeros((*image_b.shape[:2], 3), dtype=np.uint8)
-    image_b_rgb[:, :, GREEN_CHANNEL] = np.clip(image_b, 0, 255).astype(np.uint8)
+    # Show images and their labels
+    st.subheader(f"Channel A: {channel_labels.get(channel_a_idx, 'Unknown')}")
+    st.image(bright_img_a, width=IMAGE_PREVIEW_SIZE)
 
-    # Display Channel A
-    st.subheader(f"Channel A: {channel_a_name}")
-    st.image(image_a_rgb, width=IMAGE_PREVIEW_SIZE)
+    st.subheader(f"Channel B: {channel_labels.get(channel_b_idx, 'Unknown')}")
+    st.image(bright_img_b, width=IMAGE_PREVIEW_SIZE)
 
-    # Display Channel B
-    st.subheader(f"Channel B: {channel_b_name}")
-    st.image(image_b_rgb, width=IMAGE_PREVIEW_SIZE)
-
-    # Combine channels by adding their RGB arrays
-    combined_rgb = np.clip(image_a_rgb + image_b_rgb, 0, 255).astype(np.uint8)
-
+    # Combine channels visually (yellow = overlap)
+    combined = np.clip(bright_img_a.astype(np.uint16) + bright_img_b.astype(np.uint16), 0, 255).astype(np.uint8)
     st.subheader("Combined Channels (Yellow = Overlap)")
-    st.image(combined_rgb, width=IMAGE_PREVIEW_SIZE)
+    st.image(combined, width=IMAGE_PREVIEW_SIZE)
 
-    # Load and display the corresponding CSV ground truth as grayscale image
-    csv_file_name = csv_files[folder_index]
-    csv_path = os.path.join(DATA_CSVS_ROOT, csv_file_name)
-    cell_csv = pd.read_csv(csv_path)
-
-    cell_csv_image = (cell_csv * brightness_multiplier).clip(0, 1) * 200  # scale for visibility
-    cell_csv_image = cell_csv_image.astype(np.uint8)
-
+    # Show Ground Truth from corresponding CSV file
     st.subheader("Cell CSV Ground Truth")
-    st.image(cell_csv_image, width=800)
+
+    # Map image folder index to CSV file
+    csv_filename = csv_files[selected_folder_idx]
+    csv_filepath = os.path.join(DATA_CSVS_ROOT, csv_filename)
+    cell_csv = pd.read_csv(csv_filepath)
+
+    # Convert CSV to image format and apply brightness scaling
+    cell_csv_scaled = np.clip(cell_csv * brightness, 0, 1) * 200
+    cell_csv_img = cell_csv_scaled.astype(np.uint8)
+
+    st.image(cell_csv_img, width=800)
