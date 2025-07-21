@@ -1,5 +1,4 @@
 # Detection of Acute Myeloid Leukemia (AML) Cells in Patient-Derived Microscopy Samples
-## Background
 Traditional cell identification in AML diagnostics relies on manual / hard-coded methods, including fixed pixel distances from nuclei and thresholds for fluorescence intensity. This process is not only time-intensive but also highly variable across patients, making it difficult to generalize and prone to inconsistent results.
 
 To address these challenges and improve scalability, we present an automated ID approach using RetinaNet, a one-stage object detection model implemented with TensorFlow/Keras, to detect and classify acute myeloid leukemia (AML) cells expressing CD33 and immune cells expressing CD3. RetinaNet’s architecture is well-suited for this task due to its ability to accurately detect small, densely packed objects, such as cells, within complex biological imagery.
